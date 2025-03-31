@@ -145,7 +145,12 @@ def apply_filter_3d(image_path, filter_path, output_path, sobel=False):
         filtered = np.abs(filtered)
         filtered = expand_histogram(filtered)
 
-    output_img = np.stack([filtered]*3, axis=-1)
+    # Garante que o resultado tenha shape (H, W, 3)
+    if filtered.ndim == 2:
+        output_img = np.stack([filtered]*3, axis=-1)
+    else:
+        output_img = filtered
+
     Image.fromarray(output_img.astype(np.uint8)).save(output_path)
 
 
