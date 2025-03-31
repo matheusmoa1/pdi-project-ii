@@ -5,8 +5,8 @@ from utils import (
     convert_to_grayscale
 )
 
-IMAGE_PATH = 'images/images/Shapes.png'
-# IMAGE_PATH = 'images/testpat.1k.color2.tif'
+# IMAGE_PATH = 'images/Shapes.png'
+IMAGE_PATH = 'images/testpat.1k.color2.tif'
 
 
 #ETAPA 1 - Correlação Simples

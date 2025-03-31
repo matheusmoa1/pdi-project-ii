@@ -123,19 +123,18 @@ def apply_filter_with_params(image_path, filter_path, output_path, sobel=False):
 #ETAPA 3 - Correlação 3D volumétrica
 def correlate_3d(image, kernel_3d):
     kh, kw = kernel_3d.shape[1], kernel_3d.shape[2]
-    pad_h = kh // 2
-    pad_w = kw // 2
-    H, W, _ = image.shape
-    output = np.zeros((H, W))
+    pad_h, pad_w = kh // 2, kw // 2
+    H, W, C = image.shape  # Pegamos altura, largura e canais
+    output = np.zeros((H, W, C), dtype=np.float32)  # Mantemos os 3 canais
     padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w), (0, 0)), mode='reflect')
-
-    for i in range(H):
-        for j in range(W):
-            region = padded[i:i+kh, j:j+kw, :]
-            conv = np.sum(region * np.transpose(kernel_3d, (1,2,0)))
-            output[i, j] = conv
-
-    return np.clip(output, 0, 255)
+    
+    for c in range(C):  # Processamos cada canal separadamente
+        for i in range(H):
+            for j in range(W):
+                region = padded[i:i+kh, j:j+kw, c]
+                output[i, j, c] = np.sum(region * kernel_3d[c])  # Aplicamos o kernel específico do canal
+    
+    return np.clip(output, 0, 255).astype(np.uint8)
 
 def apply_filter_3d(image_path, filter_path, output_path, sobel=False):
     image = np.array(Image.open(image_path).convert('RGB'), dtype=np.float32)
